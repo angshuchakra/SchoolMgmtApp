@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,17 +22,28 @@ namespace SchoolMgmt.Controllers
         {  
             try
             {
+                var checkRecordExists = schoolDBContext.StudentDetails.Where(
+                    sdetails => sdetails.StudentName == studentDetail.StudentName && 
+                    sdetails.StudentRollNumber == studentDetail.StudentRollNumber &&
+                    sdetails.DateOfBirth == studentDetail.DateOfBirth).FirstOrDefault();
+                if(checkRecordExists !=null)
+                {
+                    if(checkRecordExists.StudentID >0)
+                    {
+                        return BadRequest();
+                    }
+                }
                 schoolDBContext.StudentDetails.Add(studentDetail);  
                 var saveResult = schoolDBContext.SaveChanges();  
                 if(saveResult<1){
                     return BadRequest();
                 }
+                return Ok();
             }
             catch (Exception ex)
             {
-                
+                return BadRequest();
             }
-            return Ok();
         }  
         [HttpGet]
         public StudentDetail Get(int studentId)
