@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMgmt.SchoolMgmtDAL;
 
@@ -46,11 +47,12 @@ namespace SchoolMgmt.Controllers
             }
         }  
         [HttpGet]
-        public StudentDetail Get(int studentId)
+        [EnableCors("SchoolManagementPolicy")]
+        public string Get(int studentId)
         {
             var studentDetails = schoolDBContext.StudentDetails.Find(studentId);
-        
-            return studentDetails;
+            var returner = Newtonsoft.Json.JsonConvert.SerializeObject(studentDetails);
+            return returner;    
         }
     } 
 }

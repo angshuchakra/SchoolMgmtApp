@@ -27,6 +27,23 @@ namespace SchoolMgmtApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Policy1",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://example.com",
+                                            "http://www.contoso.com");
+                    });
+
+                options.AddPolicy("SchoolManagementPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                    });
+            });
             // protected override void OnConfiguring(DbContextOptionsBuilder options)
             // => options.UseSqlServer("Data Source=SchoolMgmt.db");
             services.AddDbContextPool<SchoolMgmtDB>(
@@ -48,6 +65,8 @@ namespace SchoolMgmtApp
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
